@@ -1,8 +1,14 @@
 import React, { useState } from "react";
 import { Alert, Button, Card, Form, InputGroup } from "react-bootstrap";
-import EmpDataServices from "../services/emp.services";
 import { FiEyeOff, FiEye } from "react-icons/fi";
 import { Link } from "react-router-dom";
+import { useUserAuth } from "../context/UserAuthContext";
+import { useNavigate } from "react-router-dom";
+import {
+  passwordValidation,
+  confirmPasswordValidation,
+  emailValidation,
+} from "../utils/Helper";
 
 export const Register = () => {
   const [email, setEmail] = useState("");
@@ -11,7 +17,35 @@ export const Register = () => {
   const [message, setMessage] = useState({ error: false, msg: "" });
   const [passwordShown, setPasswordShown] = useState(false);
   const [ConfirmpasswordShown, setConfirmPasswordShown] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+  const [confirmPassError, setConfirmPassError] = useState("");
+  const { register } = useUserAuth();
 
+  // Email Validation
+  function handleEmailChange(event) {
+    const value = event.target.value;
+    setEmail(value);
+    const err_msg = emailValidation(value);
+    setEmailError(err_msg);
+  }
+  // Password Validation
+  function handlePasswordChange(event) {
+    const value = event.target.value;
+    setPassword(value);
+    const err_msg = passwordValidation(value); // Password Validation Function
+    setPasswordError(err_msg);
+  }
+
+  //Confirm Password Validation
+  function handleConfirmPasswordChange(event) {
+    const value = event.target.value;
+    setConfirmPassword(value);
+    const err_msg = confirmPasswordValidation(password, value); // Confirm Password Validation Function
+    setConfirmPassError(err_msg);
+  }
+
+  const navigate = useNavigate();
   const handleRegister = async (e) => {
     e.preventDefault();
     setMessage("");
@@ -20,10 +54,11 @@ export const Register = () => {
     } else {
       if (password === confirmPassword) {
         console.log("register called from emp.services");
-        const firebaseMsg = await EmpDataServices.register(email, password);
+        const firebaseMsg = await register(email, password);
         if (firebaseMsg) {
           setMessage({ error: true, msg: firebaseMsg });
         } else {
+          navigate("/"); // after successfull acc createion user redirect to login page
           setEmail("");
           setPassword("");
           setConfirmPassword("");
@@ -61,21 +96,30 @@ export const Register = () => {
               </Alert>
             )}
             <Form className="text-start" onSubmit={handleRegister}>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
+              <Form.Group
+                className="mb-3 text-start"
+                controlId="formBasicEmail"
+              >
                 <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                  placeholder="Enter email"
-                />
+                <InputGroup className="mb-1">
+                  <Form.Control
+                    value={email}
+                    onChange={handleEmailChange}
+                    type="email"
+                    placeholder="Enter email"
+                  />
+                </InputGroup>
+                {emailError && (
+                  <Form.Text className="text-danger">{emailError}</Form.Text>
+                )}
               </Form.Group>
+
               <Form.Group className="mb-3" controlId="formBasicPasswrod">
                 <Form.Label>Password</Form.Label>
-                <InputGroup className="mb-3">
+                <InputGroup className="mb-1">
                   <Form.Control
                     value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    onChange={handlePasswordChange}
                     type={passwordShown ? "text" : "password"}
                     placeholder="Password"
                   />
@@ -87,13 +131,16 @@ export const Register = () => {
                     )}
                   </InputGroup.Text>
                 </InputGroup>
+                {passwordError && (
+                  <Form.Text className="text-danger">{passwordError}</Form.Text>
+                )}
               </Form.Group>
               <Form.Group className="mb-3" controlId="formBasicConfirmPasswrod">
                 <Form.Label>Confirm Password</Form.Label>
-                <InputGroup className="mb-3">
+                <InputGroup className="mb-1">
                   <Form.Control
                     value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    onChange={handleConfirmPasswordChange}
                     type={ConfirmpasswordShown ? "text" : "password"}
                     placeholder="Confirm Password"
                   />
@@ -105,6 +152,11 @@ export const Register = () => {
                     )}
                   </InputGroup.Text>
                 </InputGroup>
+                {confirmPassError && (
+                  <Form.Text className="text-danger">
+                    {confirmPassError}
+                  </Form.Text>
+                )}
               </Form.Group>
               <Button variant="dark" type="submit">
                 Register

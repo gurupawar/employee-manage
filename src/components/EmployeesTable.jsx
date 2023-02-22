@@ -1,12 +1,45 @@
-import React from "react";
+import { collection, doc, getDoc } from "firebase/firestore";
+import React, { useState } from "react";
 import { Table } from "react-bootstrap";
 import { FiEdit, FiTrash2 } from "react-icons/fi";
-import EmpDataServices from "../services/emp.services";
+import { useUserAuth } from "../context/UserAuthContext";
+import { db } from "../firebase/init";
+import { UpdateModal } from "./UpdateModal";
 
 function EmployeesTable({ empList }) {
+  const { isUpdated, setIsUpdated, deleteEmployee, user } = useUserAuth();
+  const [show, setShow] = useState(false);
+  const [updateData, setUpdateData] = useState([]);
+
   const handleDelete = (id) => {
-    EmpDataServices.deleteTodo(id);
+    deleteEmployee(id);
+    setIsUpdated(!isUpdated);
   };
+
+  const handleUpdate = (id) => {
+    setShow(true);
+    console.log("clikk");
+
+    const usersRef = collection(db, "users");
+    const userDocRef = doc(usersRef, user.uid);
+    const empsRef = collection(userDocRef, "employees");
+    const empDocRef = doc(empsRef, id);
+
+    getDoc(empDocRef)
+      .then((doc) => {
+        if (doc.exists()) {
+          const empData = doc.data();
+          // console.log(empData);
+          setUpdateData({ empData });
+        } else {
+          console.log("employee not found");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  };
+
   return (
     <>
       <Table striped bordered hover>
@@ -32,7 +65,7 @@ function EmployeesTable({ empList }) {
                 <td>
                   <FiEdit
                     cursor="pointer"
-                    onClick={() => console.log("clicked" + e.id)}
+                    onClick={() => handleUpdate(e.id)}
                     className="me-4"
                   />
                   <FiTrash2
@@ -44,6 +77,7 @@ function EmployeesTable({ empList }) {
             ))}
         </tbody>
       </Table>
+      <UpdateModal show={show} setShow={setShow} updateData={updateData} />
     </>
   );
 }

@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import EmployeesTable from "../components/EmployeesTable";
 import { ModalForm } from "../components/ModalForm";
+import NoData from "../components/NoData";
+import { useUserAuth } from "../context/UserAuthContext";
 import { auth } from "../firebase/init";
-import EmpDataServices from "../services/emp.services";
 
-export const Employees = () => {
+export const Home = () => {
   const [show, setShow] = useState(false);
   const [empList, setEmpList] = useState([]);
+
+  const { addEmployee, fetchEmpData, isUpdated, setIsUpdated } = useUserAuth();
 
   const handleShow = () => setShow(true);
 
@@ -17,11 +20,13 @@ export const Employees = () => {
   const addEmpToFirebase = (data) => {
     const user = auth.currentUser;
     console.log("current logged user - " + user.email + " " + user.uid);
-    EmpDataServices.addEmployee(user, data);
+    const isUpdated = addEmployee(user, data);
+    setIsUpdated(isUpdated);
+    console.log(isUpdated);
   };
 
   useEffect(() => {
-    EmpDataServices.fetchEmpData()
+    fetchEmpData()
       .then((fetchedData) => {
         const flatData = fetchedData.flat(); // Flatten the array of arrays
 
@@ -31,7 +36,7 @@ export const Employees = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, [show]);
+  }, [isUpdated, fetchEmpData]);
 
   return (
     <div className="container">
@@ -45,7 +50,11 @@ export const Employees = () => {
         </div>
       </div>
       <div className="row mt-5">
-        <EmployeesTable empList={empList} />
+        {empList.length !== 0 ? (
+          <EmployeesTable empList={empList} />
+        ) : (
+          <NoData />
+        )}
       </div>
     </div>
   );

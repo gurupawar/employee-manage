@@ -1,30 +1,41 @@
 import React, { useState } from "react";
 import { Alert, Button, Card, Form, InputGroup } from "react-bootstrap";
-import EmpDataServices from "../services/emp.services";
 import { Link, useNavigate } from "react-router-dom";
 import { FiEyeOff, FiEye } from "react-icons/fi";
+import { useUserAuth } from "../context/UserAuthContext";
+import { emailValidation } from "../utils/Helper";
 
 export const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState({ error: false, msg: "" });
   const [passwordShown, setPasswordShown] = useState(false);
+  const [emailError, setEmailError] = useState("");
+  const { logIn } = useUserAuth();
 
   const navigate = useNavigate();
+
+  // Email Validation
+  function handleEmailChange(event) {
+    const value = event.target.value;
+    setEmail(value);
+    const err_msg = emailValidation(value);
+    setEmailError(err_msg);
+  }
 
   // Login Function
   const handleLogin = async (e) => {
     e.preventDefault();
     setMessage("");
+
     if (email === "" || password === "") {
       setMessage({ error: true, msg: "All fields are mandatory!" });
     } else {
-      console.log("login called from emp.services");
-      const firebaseMsg = await EmpDataServices.login(email, password);
+      const firebaseMsg = await logIn(email, password);
       if (firebaseMsg) {
         setMessage({ error: true, msg: firebaseMsg });
       } else {
-        navigate("/employees");
+        navigate("/home");
       }
     }
   };
@@ -51,14 +62,20 @@ export const Login = () => {
             <Form className="text-start" onSubmit={handleLogin}>
               <Form.Group className="mb-3" controlId="formBasicEmail">
                 <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  type="email"
-                  placeholder="Enter email"
-                />
+                <InputGroup className="mb-1">
+                  <Form.Control
+                    value={email}
+                    onChange={handleEmailChange}
+                    type="email"
+                    placeholder="Enter email"
+                  />
+                </InputGroup>
+                {emailError && (
+                  <Form.Text className="text-danger">{emailError}</Form.Text>
+                )}
               </Form.Group>
-              <Form.Group className="mb-3" controlId="formBasicEmail">
+
+              <Form.Group className="mb-3" controlId="formBasicPassword">
                 <Form.Label>Password</Form.Label>
                 <InputGroup className="mb-3">
                   <Form.Control

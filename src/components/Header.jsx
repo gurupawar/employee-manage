@@ -30,9 +30,17 @@ export const Header = () => {
               </Nav.Link>
             </Nav>
           )}
-          <Nav className="me-end">
-            <Nav.Link onClick={handleLogOut}>Logout</Nav.Link>
-          </Nav>
+          {user ? (
+            <Nav className="me-end">
+              <Nav.Link onClick={handleLogOut}>Logout</Nav.Link>
+            </Nav>
+          ) : (
+            <Nav className="me-end">
+              <Nav.Link active as={Link} to="/">
+                Login
+              </Nav.Link>
+            </Nav>
+          )}
         </Navbar.Collapse>
       </Container>
     </Navbar>

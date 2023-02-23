@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Spinner } from "react-bootstrap";
 import EmployeesTable from "../components/EmployeesTable";
 import { ModalForm } from "../components/ModalForm";
 import NoData from "../components/NoData";
@@ -8,6 +9,7 @@ import { auth } from "../firebase/init";
 export const Home = () => {
   const [show, setShow] = useState(false);
   const [empList, setEmpList] = useState([]);
+  const [loader, setLoader] = useState(false);
 
   const { addEmployee, fetchEmpData, isUpdated, setIsUpdated } = useUserAuth();
 
@@ -26,12 +28,14 @@ export const Home = () => {
   };
 
   useEffect(() => {
+    setLoader(true);
     fetchEmpData()
       .then((fetchedData) => {
         const flatData = fetchedData.flat(); // Flatten the array of arrays
 
         console.log(flatData);
         setEmpList(flatData);
+        setLoader(false);
       })
       .catch((error) => {
         console.error(error);
@@ -49,11 +53,14 @@ export const Home = () => {
           <ModalForm show={show} setShow={setShow} onSubmit={handleFormData} />
         </div>
       </div>
-      <div className="row mt-5">
-        {empList.length !== 0 ? (
-          <EmployeesTable empList={empList} />
+      <div className="row mt-5 ">
+        {loader ? (
+          <div className="row d-flex justify-content-center">
+            <Spinner animation="grow" variant="primary" />
+          </div>
         ) : (
-          <NoData />
+          // <NoData />
+          <EmployeesTable empList={empList} />
         )}
       </div>
     </div>

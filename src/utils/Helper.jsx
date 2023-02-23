@@ -56,10 +56,19 @@ function mobileValidation(mobile) {
   }
 }
 
+function validateZipCode(zipCode) {
+  if (zipCode.length < 6 || zipCode.length > 6) {
+    return "Pincode should be 6 digit";
+  } else {
+    return false;
+  }
+}
+
 export {
   passwordValidation,
   confirmPasswordValidation,
   emailValidation,
   nameValidation,
   mobileValidation,
+  validateZipCode,
 };

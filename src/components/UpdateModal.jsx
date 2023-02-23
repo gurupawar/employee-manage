@@ -1,47 +1,131 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Col, Form, Modal, Row } from "react-bootstrap";
+import { useUserAuth } from "../context/UserAuthContext";
+import {
+  emailValidation,
+  mobileValidation,
+  nameValidation,
+  validateZipCode,
+} from "../utils/Helper";
 
 export const UpdateModal = ({ show, setShow, updateData }) => {
-  const [error, setError] = useState(false);
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
-  const [city, setCity] = useState("");
-  const [state, setState] = useState("");
-  const [zip, setZip] = useState("");
+  const { id, firstName, lastName, email, phone, city, state, zip } =
+    updateData;
 
-  const upData = updateData.empData;
+  const [error, setError] = useState(false);
+
+  // for input update
+  const [updateFN, setUpdateFN] = useState("");
+  const [updateLN, setUpdateLN] = useState("");
+  const [updateCity, setUpdateCity] = useState("");
+  const [UpdateState, setUpdateState] = useState("");
+  const [updateZip, setUpdateZip] = useState("");
+  const [updateEmail, setUpdateEmail] = useState("");
+  const [updatePhone, setUpdatePhone] = useState("");
+
+  //Error Message
+  const [emailError, setEmailError] = useState("");
+  const [fNameError, setFnameError] = useState("");
+  const [lNameError, setLnameError] = useState("");
+  const [phoneError, setPhoneError] = useState("");
+  const [zipCodeError, setZipCodeError] = useState("");
+
+  const [validated, setValidated] = useState(false);
+
+  const { updateEmployee, user, isUpdated, setIsUpdated } = useUserAuth();
+
+  // Email Validation
+  function handleEmailChange(event) {
+    const value = event.target.value;
+    setUpdateEmail(value);
+    const err_msg = emailValidation(value);
+    setEmailError(err_msg);
+  }
+
+  //Name Validation
+  function handleFNameChange(event) {
+    const value = event.target.value;
+    setUpdateFN(value);
+    const err_msg = nameValidation(value);
+    setFnameError(err_msg);
+  }
+  //Name Validation
+  function handleLNameChange(event) {
+    const value = event.target.value;
+    setUpdateLN(value);
+    const err_msg = nameValidation(value);
+    setLnameError(err_msg);
+  }
+
+  //Phone Validaton
+  function handlePhoneChange(event) {
+    const value = event.target.value;
+    setUpdatePhone(value);
+    const err_msg = mobileValidation(value);
+    setPhoneError(err_msg);
+  }
+
+  //Zipcode Validation
+  function handleZipCode(event) {
+    const value = event.target.value;
+    setUpdateZip(value);
+    const err_msg = validateZipCode(value);
+    setZipCodeError(err_msg);
+  }
+
   const handleClose = () => {
     setShow(false);
     setError(false);
   };
 
+  useEffect(() => {
+    setUpdateFN(firstName || "");
+    setUpdateLN(lastName || "");
+    setUpdateCity(city || "");
+    setUpdateState(state || "");
+    setUpdatePhone(phone || "");
+    setUpdateEmail(email || "");
+    setUpdateZip(zip || "");
+  }, [city, email, firstName, lastName, phone, show, state, zip]);
+
   function handleSubmit(event) {
     event.preventDefault();
 
-    const data = {
-      firstName,
-      lastName,
-      city,
-      state,
-      zip,
+    const updatedEmployeeData = {
+      id,
+      firstName: updateFN,
+      lastName: updateLN,
+      email: updateEmail,
+      phone: updatePhone,
+      city: updateCity,
+      state: UpdateState,
+      zip: updateZip,
     };
 
+    setShow(false);
+
     if (
-      firstName === "" ||
-      lastName === "" ||
-      city === "" ||
-      state === "" ||
-      zip === ""
+      updateFN === "" ||
+      updateLN === "" ||
+      updateCity === "" ||
+      UpdateState === "" ||
+      updateZip === "" ||
+      updateEmail === "" ||
+      updatePhone === ""
     ) {
       setError(true);
     } else {
+      updateEmployee(id, user, updatedEmployeeData);
+      setIsUpdated(!isUpdated);
       setShow(false);
       setError(false);
-      setFirstName("");
-      setLastName("");
-      setCity("");
-      setState("");
-      setZip("");
+      setUpdateFN("");
+      setUpdateLN("");
+      setUpdateCity("");
+      setUpdateState("");
+      setUpdatePhone("");
+      setUpdateEmail("");
+      setUpdateZip("");
     }
   }
 
@@ -49,7 +133,7 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
     <>
       <Modal size="lg" show={show} centered>
         <Modal.Header closeButton onClick={handleClose}>
-          <Modal.Title>Add Employee</Modal.Title>
+          <Modal.Title>Update Employee</Modal.Title>
         </Modal.Header>
         <Modal.Body>
           <Form onSubmit={handleSubmit}>
@@ -65,26 +149,54 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
               ""
             )}
             <Row className="mb-3">
-              <Form.Group as={Col} controlId="formGridEmail">
+              <Form.Group as={Col} controlId="formGridFirstName">
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="firstName"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                  placeholder="Alex"
+                  value={updateFN}
+                  onChange={handleFNameChange}
                 />
+                {fNameError && (
+                  <Form.Text className="text-danger">{fNameError}</Form.Text>
+                )}
               </Form.Group>
 
-              <Form.Group as={Col} controlId="formGridPassword">
+              <Form.Group as={Col} controlId="formGridLastName">
                 <Form.Label>Last Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="lastName"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                  placeholder="Jone"
+                  value={updateLN}
+                  onChange={handleLNameChange}
                 />
+                {lNameError && (
+                  <Form.Text className="text-danger">{lNameError}</Form.Text>
+                )}
+              </Form.Group>
+            </Row>
+
+            <Row className="mb-3">
+              <Form.Group as={Col} controlId="formGridEmail">
+                <Form.Label>Email</Form.Label>
+                <Form.Control
+                  type="text"
+                  value={updateEmail}
+                  onChange={handleEmailChange}
+                />
+                {emailError && (
+                  <Form.Text className="text-danger">{emailError}</Form.Text>
+                )}
+              </Form.Group>
+
+              <Form.Group as={Col} controlId="formGridPhone">
+                <Form.Label>Phone</Form.Label>
+                <Form.Control
+                  type="number"
+                  value={updatePhone}
+                  onChange={handlePhoneChange}
+                />
+                {phoneError && (
+                  <Form.Text className="text-danger">{phoneError}</Form.Text>
+                )}
               </Form.Group>
             </Row>
 
@@ -92,10 +204,9 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
               <Form.Group as={Col} controlId="formGridCity">
                 <Form.Label>City</Form.Label>
                 <Form.Control
-                  name="city"
                   type="text"
-                  value={city}
-                  onChange={(e) => setCity(e.target.value)}
+                  value={updateCity}
+                  onChange={(e) => setUpdateCity(e.target.value)}
                 />
               </Form.Group>
 
@@ -104,8 +215,8 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
                 <Form.Control
                   name="state"
                   type="text"
-                  value={state}
-                  onChange={(e) => setState(e.target.value)}
+                  value={UpdateState}
+                  onChange={(e) => setUpdateState(e.target.value)}
                 />
               </Form.Group>
 
@@ -114,9 +225,12 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
                 <Form.Control
                   name="zip"
                   type="number"
-                  value={zip}
-                  onChange={(e) => setZip(e.target.value)}
+                  value={updateZip}
+                  onChange={handleZipCode}
                 />
+                {zipCodeError && (
+                  <Form.Text className="text-danger">{zipCodeError}</Form.Text>
+                )}
               </Form.Group>
             </Row>
             <Button type="submit" variant="primary">

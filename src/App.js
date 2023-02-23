@@ -6,6 +6,7 @@ import { Register } from "./pages/Register";
 import { Home } from "./pages/Home";
 import { UserAuthContextProvider } from "./context/UserAuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
+import { AddEmployee } from "./components/AddEmployee";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Header />
         <Routes>
           <Route path="/" element={<Login />} />
+          <Route path="/add-employee" element={<AddEmployee />} />
           <Route path="/register" element={<Register />} />
           <Route
             path="/home"

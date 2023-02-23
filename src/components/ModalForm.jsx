@@ -4,9 +4,11 @@ import {
   emailValidation,
   mobileValidation,
   nameValidation,
+  validateZipCode,
 } from "../utils/Helper";
 
 export const ModalForm = ({ show, setShow, onSubmit }) => {
+  // for input update
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [city, setCity] = useState("");
@@ -14,12 +16,13 @@ export const ModalForm = ({ show, setShow, onSubmit }) => {
   const [zip, setZip] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+
+  //Error Message
   const [emailError, setEmailError] = useState("");
   const [fNameError, setFnameError] = useState("");
   const [lNameError, setLnameError] = useState("");
   const [phoneError, setPhoneError] = useState("");
-  const [validForm, setValidForm] = useState(false);
-
+  const [zipCodeError, setZipCodeError] = useState("");
   const [error, setError] = useState(false);
 
   // Email Validation
@@ -30,23 +33,35 @@ export const ModalForm = ({ show, setShow, onSubmit }) => {
     setEmailError(err_msg);
   }
 
+  //Name Validation
   function handleFNameChange(event) {
     const value = event.target.value;
     setFirstName(value);
     const err_msg = nameValidation(value);
     setFnameError(err_msg);
   }
+  //Name Validation
   function handleLNameChange(event) {
     const value = event.target.value;
     setLastName(value);
     const err_msg = nameValidation(value);
     setLnameError(err_msg);
   }
+
+  //Phone Validaton
   function handlePhoneChange(event) {
     const value = event.target.value;
     setPhone(value);
     const err_msg = mobileValidation(value);
     setPhoneError(err_msg);
+  }
+
+  //Zipcode Validation
+  function handleZipCode(event) {
+    const value = event.target.value;
+    setZip(value);
+    const err_msg = validateZipCode(value);
+    setZipCodeError(err_msg);
   }
 
   const handleClose = () => {
@@ -66,6 +81,8 @@ export const ModalForm = ({ show, setShow, onSubmit }) => {
     const data = {
       firstName,
       lastName,
+      email,
+      phone,
       city,
       state,
       zip,
@@ -125,7 +142,6 @@ export const ModalForm = ({ show, setShow, onSubmit }) => {
                 <Form.Label>First Name</Form.Label>
                 <Form.Control
                   type="text"
-                  name="firstName"
                   value={firstName}
                   onChange={handleFNameChange}
                   placeholder="Alex"
@@ -199,13 +215,16 @@ export const ModalForm = ({ show, setShow, onSubmit }) => {
               </Form.Group>
 
               <Form.Group as={Col} controlId="formGridZip">
-                <Form.Label>Zip</Form.Label>
+                <Form.Label>Pincode</Form.Label>
                 <Form.Control
                   name="zip"
                   type="number"
                   value={zip}
-                  onChange={(e) => setZip(e.target.value)}
+                  onChange={handleZipCode}
                 />
+                {zipCodeError && (
+                  <Form.Text className="text-danger">{zipCodeError}</Form.Text>
+                )}
               </Form.Group>
             </Row>
             <Button type="submit" variant="primary">

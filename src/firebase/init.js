@@ -4,12 +4,13 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyCmN4ExLpxd34-kxHpFgd3Ld8YMRO2jmZI",
-  authDomain: "emp-manage-aee90.firebaseapp.com",
-  projectId: "emp-manage-aee90",
-  storageBucket: "emp-manage-aee90.appspot.com",
-  messagingSenderId: "1098792886072",
-  appId: "1:1098792886072:web:98cc9c6d6e1acaf2b06bcd",
+  apiKey: "AIzaSyBuTaNDDdNiZtxic878fsJy47r7TZ8kIbY",
+  authDomain: "emp-data-cd460.firebaseapp.com",
+  databaseURL: "https://emp-data-cd460-default-rtdb.firebaseio.com",
+  projectId: "emp-data-cd460",
+  storageBucket: "emp-data-cd460.appspot.com",
+  messagingSenderId: "891658757758",
+  appId: "1:891658757758:web:f2cd2daf4cb760ec5fda2f",
 };
 
 // Initialize Firebase

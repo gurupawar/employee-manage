@@ -93,9 +93,18 @@ export const Login = () => {
                   </InputGroup.Text>
                 </InputGroup>
               </Form.Group>
-              <Button variant="dark" type="submit">
-                Login
-              </Button>
+              <div className="row">
+                <div className="col-6">
+                  <Button variant="dark" type="submit">
+                    Login
+                  </Button>
+                </div>
+                <div className="col-6 d-flex align-items-center justify-content-end">
+                  <Link to="forgotPassword" className="text-decoration-none">
+                    <small>Forgot Password?</small>
+                  </Link>
+                </div>
+              </div>
             </Form>
           </Card>
         </div>
@@ -107,7 +116,10 @@ export const Login = () => {
             style={{ maxWidth: "500px" }}
           >
             <span>
-              Don't have an account? <Link to="/register">Register</Link>
+              Don't have an account?{" "}
+              <Link to="/register" className="text-decoration-none">
+                Register
+              </Link>
             </span>
           </Card>
         </div>

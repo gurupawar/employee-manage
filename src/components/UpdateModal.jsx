@@ -30,8 +30,6 @@ export const UpdateModal = ({ show, setShow, updateData }) => {
   const [phoneError, setPhoneError] = useState("");
   const [zipCodeError, setZipCodeError] = useState("");
 
-  const [validated, setValidated] = useState(false);
-
   const { updateEmployee, user, isUpdated, setIsUpdated } = useUserAuth();
 
   // Email Validation

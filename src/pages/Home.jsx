@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { Spinner } from "react-bootstrap";
 import EmployeesTable from "../components/EmployeesTable";
 import { ModalForm } from "../components/ModalForm";
-import NoData from "../components/NoData";
 import { useUserAuth } from "../context/UserAuthContext";
 import { auth } from "../firebase/init";
 
@@ -59,7 +58,6 @@ export const Home = () => {
             <Spinner animation="grow" variant="primary" />
           </div>
         ) : (
-          // <NoData />
           <EmployeesTable empList={empList} />
         )}
       </div>

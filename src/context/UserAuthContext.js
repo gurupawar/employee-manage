@@ -3,6 +3,7 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 import {
   addDoc,
@@ -147,6 +148,18 @@ export function UserAuthContextProvider({ children }) {
     }
   }
 
+  //Change Password
+  function forgotPassword(email) {
+    console.log(email);
+    return sendPasswordResetEmail(auth, email)
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return error;
+      });
+  }
+
   //   To check user is logged in or not
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -170,6 +183,7 @@ export function UserAuthContextProvider({ children }) {
         setIsUpdated,
         deleteEmployee,
         updateEmployee,
+        forgotPassword,
       }}
     >
       {children}

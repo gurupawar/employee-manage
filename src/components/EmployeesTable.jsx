@@ -34,7 +34,7 @@ function EmployeesTable({ empList }) {
 
   return (
     <>
-      {empList.length != 0 ? (
+      {empList.length !== 0 ? (
         <Table striped bordered hover responsive>
           <thead>
             <tr>

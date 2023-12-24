@@ -6,8 +6,8 @@ import { useUserAuth } from "../context/UserAuthContext";
 import { emailValidation } from "../utils/Helper";
 
 export const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("user1@gmail.com");
+  const [password, setPassword] = useState("123@Guru");
   const [message, setMessage] = useState({ error: false, msg: "" });
   const [passwordShown, setPasswordShown] = useState(false);
   const [emailError, setEmailError] = useState("");
